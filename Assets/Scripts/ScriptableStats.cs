@@ -1,0 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
+
+[CreateAssetMenu]
+public class ScriptableStats : ScriptableObject
+{
+    [Header("INPUT")] 
+    [Tooltip("Makes all Input snap to an integer. Prevents gamepads from walking slowly.")]
+    public bool snapInput = true;
+    
+    [Tooltip("Minimum input required before a left or right is recognized. Avoids drifting with sticky controllers"), Range(0.01f, 0.99f)]
+    public float horizontalDeadZoneThreshold = 0.1f;
+    
+    
+    [Header("MOVEMENT")]
+    [Tooltip("The top horizontal movement speed")]
+    public float maxSpeed = 14;
+
+    [Tooltip("The player's capacity to gain horizontal speed")]
+    public float acceleration = 120;
+
+    [Tooltip("The pace at which the player comes to a stop")]
+    public float groundDeceleration = 60;
+
+    [Tooltip("Deceleration in air only after stopping input mid-air")]
+    public float airDeceleration = 30;
+    
+    [Tooltip("A constant downward force applied while grounded. Helps on slopes"), Range(0f, -10f)]
+    public float groundedDownforce = -1.5f;
+    
+    
+    [Header("JUMP")] 
+    [Tooltip("The maximum vertical movement speed")]
+    public float maxFallSpeed = 40;
+    
+    [Tooltip("The immediate velocity applied when jumping")]
+    public float jumpPower = 5;
+    
+    [Tooltip("The amount gravity is divided by when jump is being held")]
+    public float jumpBeingHeldGravityModifier = 3;
+    
+    [Tooltip("The fixed frames before coyote jump becomes unusable. Coyote jump allows jump to execute even after leaving a ledge")]
+    public int coyoteFrames = 7;
+
+    [Tooltip("The amount of fixed frames we buffer a jump. This allows jump input before actually hitting the ground")]
+    public int jumpBufferFrames = 7;
+
+
+    [Header("DASH")] 
+    public float dashingPower = 20f;
+    public float dashingTime = .2f;
+    public float dashingCooldown = 1f;
+    
+}
