@@ -348,7 +348,7 @@ public class PlayerAdvanced : MonoBehaviour
 	private void Turn()
 	{
 		IsFacingRight = !IsFacingRight;
-		anim.Turn();
+		//anim.Turn();
 	}
 
 	private void Jump()

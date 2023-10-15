@@ -17,10 +17,10 @@ AnimatorStateMachine:
     m_Position: {x: 210, y: 370, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1630473972252050523}
-    m_Position: {x: 210, y: 440, z: 0}
+    m_Position: {x: 210, y: 430, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7786454552352544532}
-    m_Position: {x: 210, y: 510, z: 0}
+    m_Position: {x: 210, y: 500, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2728574359065602481}
     m_Position: {x: 430, y: 300, z: 0}
@@ -66,7 +66,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Animator Controller
+  m_Name: PlayerAnimationController
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Horizontal

@@ -53,4 +53,16 @@ public class ScriptableStats : ScriptableObject
     public float dashingTime = .2f;
     public float dashingCooldown = 1f;
     
+    [Header("KNOCKBACK")] 
+    [Tooltip("Amount of frames the player is being pushed away from the enemy"), Range(0f, 50f)] 
+    public float knockBackFrames = 7f;
+
+    [Tooltip("amount of invincibility frames the player has after being pushed"), Range(0f,120f)]
+    public float iFrames = 60f;
+
+    [Tooltip("the horizontal force applied when the player collides with an enemy"), Range(0f,100f)]
+    public float knockBackForceHorizontal = 10f;
+    
+    [Tooltip("the vertical force applied when the player collides with an enemy"), Range(0f,100f)]
+    public float knockBackForceVertical = 8f;
 }
