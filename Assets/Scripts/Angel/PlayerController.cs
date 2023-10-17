@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -37,14 +38,20 @@ namespace Angel
         public bool Grounded { get; private set; }
         private int _frameLeftGround = int.MinValue;
     
-        //BulletPooler
+        //Bullets
         private ObjectPooler _bulletPoller;
-        [SerializeField] private int amountOfBulletsToPool = 5;
-        
+        [SerializeField] private GameObject bulletPrefab;
+        private int _currentAmmo;
+        public event Action<int> OnAmmoChanged;
+
         //Enemy Interactions
         private bool _canBeDamaged = true;
         private bool _isBeingDamaged;
         private int _frameDamageReceived;
+        
+        //Health
+        private int _currentHealth;
+        public event Action<int> OnHealthChanged;
 
 
         void Start()
@@ -54,6 +61,8 @@ namespace Angel
             _dashingTrailRenderer = GetComponent<TrailRenderer>();
             InitializeBulletPooler();
             _groundLayerMask = LayerMask.GetMask("Ground");
+            _currentHealth = stats.maxHealth;
+            _currentAmmo = stats.maxAmmo;
         }
     
         void Update()
@@ -97,63 +106,63 @@ namespace Angel
         }
     
         #region Jumping
-        private bool HasBufferedJump => _canBufferJump && _fixedFrame < _frameJumpWasPressed + stats.jumpBufferFrames;
-        private bool CanUseCoyote => _isCoyoteUsable && !Grounded && _fixedFrame < _frameLeftGround + stats.coyoteFrames;
+            private bool HasBufferedJump => _canBufferJump && _fixedFrame < _frameJumpWasPressed + stats.jumpBufferFrames;
+            private bool CanUseCoyote => _isCoyoteUsable && !Grounded && _fixedFrame < _frameLeftGround + stats.coyoteFrames;
 
-        void HandleJump()
-        {
-            _isHoldingJump = !_isHoldingJump && !Grounded && _isJumpButtonHeld && _rb.velocity.y > 0; //return true if jump is being held while moving upwards
-            
-            if (!_canJump && !HasBufferedJump) return; // if player didn't pressed jump or didn't buffer jump. Cancel Jump.
-            
-            if (Grounded || CanUseCoyote) //jump if grounded or if coyote is active
+            void HandleJump()
             {
-                _isHoldingJump = false;
-                _frameJumpWasPressed = 0;
-                _canBufferJump = false;
-                _isCoyoteUsable = false;
-                _velocity.y = stats.jumpPower;
-            }
+                _isHoldingJump = !_isHoldingJump && !Grounded && _isJumpButtonHeld && _rb.velocity.y > 0; //return true if jump is being held while moving upwards
+                
+                if (!_canJump && !HasBufferedJump) return; // if player didn't pressed jump or didn't buffer jump. Cancel Jump.
+                
+                if (Grounded || CanUseCoyote) //jump if grounded or if coyote is active
+                {
+                    _isHoldingJump = false;
+                    _frameJumpWasPressed = 0;
+                    _canBufferJump = false;
+                    _isCoyoteUsable = false;
+                    _velocity.y = stats.jumpPower;
+                }
 
-            _canJump = false;
-        }
+                _canJump = false;
+            }
 
         #endregion
     
         #region Movement
-        private void HandleHorizontal()
-        {
-            if (_horizontalInput == 0)
+            private void HandleHorizontal()
             {
-                float deceleration = Grounded ? stats.groundDeceleration : stats.airDeceleration;  //changes horizontal deceleration depending if its grounded or in the air.
-                _velocity.x = Mathf.MoveTowards(_rb.velocity.x, 0, deceleration * Time.fixedDeltaTime);
+                if (_horizontalInput == 0)
+                {
+                    float deceleration = Grounded ? stats.groundDeceleration : stats.airDeceleration;  //changes horizontal deceleration depending if its grounded or in the air.
+                    _velocity.x = Mathf.MoveTowards(_rb.velocity.x, 0, deceleration * Time.fixedDeltaTime);
+                }
+                else
+                {
+                    _velocity.x = Mathf.MoveTowards(_rb.velocity.x, _horizontalInput * stats.maxSpeed, stats.acceleration * Time.fixedDeltaTime);
+                }
             }
-            else
-            {
-                _velocity.x = Mathf.MoveTowards(_rb.velocity.x, _horizontalInput * stats.maxSpeed, stats.acceleration * Time.fixedDeltaTime);
-            }
-        }
 
-        void HandleVertical()
-        {
-            if (_isBeingDamaged) {_velocity = _rb.velocity; return;}
-            
-            if (Grounded && _velocity.y <= 0f)
+            void HandleVertical()
             {
-                _velocity.y = stats.groundedDownforce;  // if grounded. Apply a small force towards the ground. helps on slopes.
+                if (_isBeingDamaged) {_velocity = _rb.velocity; return;}
+                
+                if (Grounded && _velocity.y <= 0f)
+                {
+                    _velocity.y = stats.groundedDownforce;  // if grounded. Apply a small force towards the ground. helps on slopes.
+                }
+                else
+                {
+                    float gravity = Physics2D.gravity.y * 2;
+                    gravity = _isHoldingJump && _rb.velocity.y > 0 ? gravity / stats.jumpBeingHeldGravityModifier : gravity; // if jump is being held and player is moving up, gravity is divided to jump higher
+                    _velocity.y = Mathf.MoveTowards(_velocity.y, stats.maxFallSpeed, gravity * Time.fixedDeltaTime); // Apply gravity until maxFallSpeed
+                }
             }
-            else
-            {
-                float gravity = Physics2D.gravity.y * 2;
-                gravity = _isHoldingJump && _rb.velocity.y > 0 ? gravity / stats.jumpBeingHeldGravityModifier : gravity; // if jump is being held and player is moving up, gravity is divided to jump higher
-                _velocity.y = Mathf.MoveTowards(_velocity.y, stats.maxFallSpeed, gravity * Time.fixedDeltaTime); // Apply gravity until maxFallSpeed
-            }
-        }
 
-        void ApplyMovement()
-        {
-            _rb.velocity = _velocity;
-        }
+            void ApplyMovement()
+            {
+                _rb.velocity = _velocity;
+            }
 
         #endregion
 
@@ -193,28 +202,63 @@ namespace Angel
         #endregion
     
         #region Shooting
-        void ShootBullet() 
-        {
-            GameObject bulletToShoot = _bulletPoller.GetPooledObject();
-        
-            if (bulletToShoot != null)
+            void ShootBullet() 
             {
-                bulletToShoot.transform.position = transform.position;
-                bulletToShoot.SetActive(true); 
+                GameObject bulletToShoot = _bulletPoller.GetPooledObject();
+            
+                if (bulletToShoot != null && _currentAmmo > 0) //if there is an inactive prefab and ammo is higher than 0, shoot bullet
+                {
+                    bulletToShoot.transform.position = transform.position;
+                    bulletToShoot.SetActive(true);
+                    _currentAmmo--;
+                    OnAmmoChanged?.Invoke(_currentAmmo); // call subscriber to update Ui
+                }
             }
-            else
+            
+            void InitializeBulletPooler() 
             {
-                print("there is no inactive prefab to use");
+                GameObject bulletsPooler = new GameObject("BulletPooler").AddComponent<ObjectPooler>().gameObject;
+                _bulletPoller = bulletsPooler.GetComponent<ObjectPooler>();
+                _bulletPoller.objectToPool = bulletPrefab;
+                _bulletPoller.amountToPool = stats.maxAmmo;
             }
-        }
+
+        #endregion
+
+        #region Player Health
         
-        void InitializeBulletPooler() 
-        {
-            GameObject bulletsPooler = new GameObject("BulletPooler").AddComponent<ObjectPooler>().gameObject;
-            _bulletPoller = bulletsPooler.GetComponent<ObjectPooler>();
-            _bulletPoller.objectToPool = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Bullet.prefab");
-            _bulletPoller.amountToPool = amountOfBulletsToPool;
-        }
+            void TakeDamage(int amount)
+            {
+                _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, stats.maxHealth);
+                OnHealthChanged?.Invoke(_currentHealth); //calls subscriber to update UI
+
+                if (_currentHealth == 0)
+                {
+                    //ded
+                }
+            }
+        
+            private IEnumerator HandleDamageReceived(Collision2D other)
+            {
+                _canBeDamaged = false;
+                _isBeingDamaged = true;
+                _frameDamageReceived = _fixedFrame;
+                TakeDamage(1);
+                    
+                Physics2D.IgnoreLayerCollision(6,7,true);
+                Vector2 knockBackDir = (transform.position - other.transform.position).normalized;
+                _rb.velocity = new Vector2(knockBackDir.x * stats.knockBackForceHorizontal, knockBackDir.y * stats.knockBackForceVertical);
+                _sr.color = new Color(1,0,0,.5f);
+                    
+                yield return new WaitUntil(() => _frameDamageReceived + stats.knockBackFrames < _fixedFrame);
+                _isBeingDamaged = false;
+                _frameDamageReceived = _fixedFrame;
+                    
+                yield return new WaitUntil(() => _frameDamageReceived + stats.iFrames < _fixedFrame);
+                Physics2D.IgnoreLayerCollision(6,7,false);
+                _sr.color = Color.white;
+                _canBeDamaged = true;
+            }
 
         #endregion
 
@@ -232,27 +276,6 @@ namespace Angel
             _canDash = true;
         }
         
-        private IEnumerator HandleDamageReceived(Collision2D other)
-        {
-            _canBeDamaged = false;
-            _isBeingDamaged = true;
-            _frameDamageReceived = _fixedFrame;
-            
-            Physics2D.IgnoreLayerCollision(6,7,true);
-            Vector2 knockBackDir = (transform.position - other.transform.position).normalized;
-            _rb.velocity = new Vector2(knockBackDir.x * stats.knockBackForceHorizontal, knockBackDir.y * stats.knockBackForceVertical);
-            _sr.color = new Color(1,0,0,.5f);
-            
-            yield return new WaitUntil(() => _frameDamageReceived + stats.knockBackFrames < _fixedFrame);
-            _isBeingDamaged = false;
-            _frameDamageReceived = _fixedFrame;
-            
-            yield return new WaitUntil(() => _frameDamageReceived + stats.iFrames < _fixedFrame);
-            Physics2D.IgnoreLayerCollision(6,7,false);
-            _sr.color = Color.white;
-            _canBeDamaged = true;
-        }
-    
 #if UNITY_EDITOR
         private void OnValidate()
         {

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   snapInput: 1
   horizontalDeadZoneThreshold: 0.1
+  maxHealth: 12
   maxSpeed: 10
   acceleration: 100
   groundDeceleration: 60
@@ -27,3 +28,8 @@ MonoBehaviour:
   dashingPower: 2
   dashingTime: 0.2
   dashingCooldown: 1
+  knockBackFrames: 7
+  iFrames: 60
+  knockBackForceHorizontal: 10
+  knockBackForceVertical: 8
+  maxAmmo: 8

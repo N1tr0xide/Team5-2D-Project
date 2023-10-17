@@ -12,8 +12,11 @@ public class ScriptableStats : ScriptableObject
     
     [Tooltip("Minimum input required before a left or right is recognized. Avoids drifting with sticky controllers"), Range(0.01f, 0.99f)]
     public float horizontalDeadZoneThreshold = 0.1f;
-    
-    
+
+    [Header("HEALTH")] 
+    [Tooltip("Maximum amount of health a player can have at a given time")]
+    public int maxHealth = 12;
+
     [Header("MOVEMENT")]
     [Tooltip("The top horizontal movement speed")]
     public float maxSpeed = 14;
@@ -47,13 +50,17 @@ public class ScriptableStats : ScriptableObject
     [Tooltip("The amount of fixed frames we buffer a jump. This allows jump input before actually hitting the ground")]
     public int jumpBufferFrames = 7;
 
-
     [Header("DASH")] 
+    [Tooltip("Force applied in x-direction when dashing")]
     public float dashingPower = 20f;
+    
+    [Tooltip("duration of dash in seconds ")]
     public float dashingTime = .2f;
+    
+    [Tooltip("time in seconds before the player can dash again")]
     public float dashingCooldown = 1f;
     
-    [Header("KNOCKBACK")] 
+    [Header("KNOCK BACK")] 
     [Tooltip("Amount of frames the player is being pushed away from the enemy"), Range(0f, 50f)] 
     public float knockBackFrames = 7f;
 
@@ -65,4 +72,8 @@ public class ScriptableStats : ScriptableObject
     
     [Tooltip("the vertical force applied when the player collides with an enemy"), Range(0f,100f)]
     public float knockBackForceVertical = 8f;
+
+    [Header("BULLETS")] 
+    [Tooltip("Maximum amount of bullets the player can have at a given time")]
+    public int maxAmmo = 12;
 }

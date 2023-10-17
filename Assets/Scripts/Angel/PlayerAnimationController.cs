@@ -9,6 +9,7 @@ namespace Angel
         private PlayerController _playerController;
         private Animator _animator;
         private Rigidbody2D _rb;
+        private SpriteRenderer _sr;
 
         private bool _isGrounded;
         private static readonly int Velocity = Animator.StringToHash("Velocity");
@@ -22,6 +23,7 @@ namespace Angel
             _rb = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _playerController = GetComponent<PlayerController>();
+            _sr = GetComponentInChildren<SpriteRenderer>();
         }
 
         // Update is called once per frame
@@ -53,11 +55,18 @@ namespace Angel
             }
             else if (_rb.velocity.x != 0 && _isGrounded)
             {
-                Vector3 scale = transform.localScale;
-                scale.x = Mathf.Sign(_rb.velocity.x);
-                transform.localScale = scale;
+                CheckDirection();
                 ChangeAnimationState("Run");
             }
+        }
+
+        /// <summary>
+        /// Check input to determine direction to look towards
+        /// </summary>
+        void CheckDirection()
+        {
+            if (Input.GetAxis("Horizontal") > .1f) { _sr.flipX = false; }
+            else if (Input.GetAxis("Horizontal") < -.1f) { _sr.flipX = true; }
         }
     }
 }
