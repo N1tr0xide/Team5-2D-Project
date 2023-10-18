@@ -32,8 +32,16 @@ public class ScriptableStats : ScriptableObject
     
     [Tooltip("A constant downward force applied while grounded. Helps on slopes"), Range(0f, -10f)]
     public float groundedDownforce = -1.5f;
+
+    [Tooltip("amount of force applied to slide")]
+    public float slidePower = 5f;
     
+    [Tooltip("duration of slide in seconds")]
+    public float minSlideTime = 1f;
     
+    [Tooltip("time in seconds before player can slide again")]
+    public float slideCooldown = 5f;
+
     [Header("JUMP")] 
     [Tooltip("The maximum vertical movement speed")]
     public float maxFallSpeed = 40;
