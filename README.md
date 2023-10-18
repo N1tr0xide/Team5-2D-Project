@@ -1,7 +1,7 @@
 # Team5-2D-Project
 
 CONTROLS
-Movement: A left, D right
+Movement: A left, D right.
 Slide: S while moving and grounded
 Dash: Shift 
 Jump: Space 
