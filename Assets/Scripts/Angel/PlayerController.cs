@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace Angel
@@ -50,6 +51,13 @@ namespace Angel
         [SerializeField] private GameObject bulletPrefab;
         [HideInInspector] public int currentAmmo;
         public event Action<int> OnAmmoChanged;
+        public bulletPowerupMode currentBulletPowerup;
+
+        public enum bulletPowerupMode
+        {
+            normal,
+            powerup
+        }
 
         //Enemy Interactions
         private bool _canBeDamaged = true;
@@ -78,6 +86,7 @@ namespace Angel
             InitializeBulletPooler();
             _currentHealth = stats.maxHealth;
             currentAmmo = stats.maxAmmo;
+            currentBulletPowerup = bulletPowerupMode.normal;
         }
     
         void Update()
@@ -213,8 +222,22 @@ namespace Angel
                     StartCoroutine(HandleDamageReceived(other));
                 }
             }
-            
-            bool IsGrounded() //Check if player is touching the Ground LayerMask
+
+            private void OnTriggerEnter2D(Collider2D collision)
+            {
+                if (collision.gameObject.CompareTag("DeathZone"))
+                {
+                    gameObject.SetActive(false);
+                    Invoke("RestartLevel", 3);
+                }
+            }
+
+            void RestartLevel()
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+
+        bool IsGrounded() //Check if player is touching the Ground LayerMask
             {
                 float distance = 1.1f;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, distance, _groundLayerMask);
@@ -248,7 +271,7 @@ namespace Angel
                     bulletToShoot.SetActive(true);
                     _audio.PlaySfx(_audio.audioAssets.gun);
                     currentAmmo--;
-                    OnAmmoUpdateUI();
+                    OnAmmoUpdate();
                 }
                 else
                 {
@@ -259,7 +282,7 @@ namespace Angel
             /// <summary>
             ///  // call subscriber to update ammo Ui
             /// </summary>
-            public void OnAmmoUpdateUI()
+            public void OnAmmoUpdate()
             {
                 OnAmmoChanged?.Invoke(currentAmmo);
             }

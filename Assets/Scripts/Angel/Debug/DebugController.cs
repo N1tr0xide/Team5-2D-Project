@@ -39,7 +39,7 @@ public class DebugController : MonoBehaviour
         {
             PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
             playerController.currentAmmo = playerController.stats.maxAmmo;
-            playerController.OnAmmoUpdateUI();
+            playerController.OnAmmoUpdate();
         });
 
         _commandList = new List<object>
