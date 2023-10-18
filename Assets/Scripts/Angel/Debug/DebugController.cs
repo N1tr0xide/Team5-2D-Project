@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class DebugController : MonoBehaviour
 {
-    [SerializeField] private bool showConsole;
+    private bool _showConsole;
     private bool _showHelp;
     private Vector2 _scroll;
     private readonly int _boxHeight = 40;
@@ -45,7 +45,7 @@ public class DebugController : MonoBehaviour
     {
         ToggleDebug(Input.GetKeyDown(KeyCode.RightShift));
 
-        if (showConsole)
+        if (_showConsole)
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
@@ -58,7 +58,7 @@ public class DebugController : MonoBehaviour
     
     void ToggleDebug(bool key)
     {
-        if(key) { showConsole = !showConsole; }
+        if(key) { _showConsole = !_showConsole; }
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public class DebugController : MonoBehaviour
     /// </summary>
     private void OnGUI()
     {
-        if(!showConsole) {return;}
+        if(!_showConsole) {return;}
         float y = Screen.height -_boxHeight; //put box at bottom
 
         GUIStyle style = new GUIStyle

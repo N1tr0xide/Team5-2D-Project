@@ -19,6 +19,7 @@ namespace Angel
         private bool _isJumpButtonHeld;
         private bool _shootingInput;
         private bool _dashingInput;
+        private bool _slideInput;
 
         //Jumping
         private bool _canJump;
@@ -31,13 +32,19 @@ namespace Angel
         private TrailRenderer _dashingTrailRenderer;
         private bool _canDash = true;
         private bool _isDashing;
+        
+        //Sliding
+        private bool _canSlide = true;
+        private bool _isSliding;
+        private CapsuleCollider2D _mainCollider;
+        [SerializeField] private CapsuleCollider2D slideCollider;
     
         //Movement && Collisions
         LayerMask _groundLayerMask; 
         private Vector2 _velocity;
         public bool Grounded { get; private set; }
         private int _frameLeftGround = int.MinValue;
-    
+
         //Bullets
         private ObjectPooler _bulletPoller;
         [SerializeField] private GameObject bulletPrefab;
@@ -59,8 +66,12 @@ namespace Angel
             _rb = GetComponent<Rigidbody2D>();
             _sr = GetComponentInChildren<SpriteRenderer>();
             _dashingTrailRenderer = GetComponent<TrailRenderer>();
-            InitializeBulletPooler();
+            _mainCollider = GetComponent<CapsuleCollider2D>();
+            slideCollider.enabled = false;
+            _mainCollider.enabled = true;
             _groundLayerMask = LayerMask.GetMask("Ground");
+            
+            InitializeBulletPooler();
             _currentHealth = stats.maxHealth;
             _currentAmmo = stats.maxAmmo;
         }
@@ -68,6 +79,7 @@ namespace Angel
         void Update()
         {
             GetInput();
+            //print(_canSlide);
         }
 
         private void FixedUpdate()
@@ -76,10 +88,16 @@ namespace Angel
             CheckCollisions();
             
             if(_isDashing) return;
-            HandleJump();
-            HandleHorizontal();
             HandleVertical();
+
+            if (!_isSliding)
+            {
+                HandleJump();
+                HandleHorizontal();
+            }
+            
             ApplyMovement();
+            
         } 
         void GetInput()
         {
@@ -88,6 +106,8 @@ namespace Angel
             _isJumpButtonHeld = Input.GetButton("Jump");
             _shootingInput = Input.GetMouseButtonDown(0);
             _dashingInput = Input.GetKeyDown(KeyCode.LeftShift);
+            _slideInput = Input.GetKeyDown(KeyCode.S);
+            
 
             if (stats.snapInput) //Snap horizontal input after reaching threshold
             { 
@@ -103,6 +123,8 @@ namespace Angel
             if (_shootingInput) { ShootBullet(); }
 
             if (_dashingInput && _canDash) { StartCoroutine(Dash()); }
+
+            if (_slideInput && _canSlide && Grounded && _rb.velocity.x != 0) { StartCoroutine(Slide()); }
         }
     
         #region Jumping
@@ -198,8 +220,21 @@ namespace Angel
 
                 return hit.collider;
             }
-    
-        #endregion
+
+            bool IsUnderObject()
+            {
+                float distance = 1.3f;
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, distance, _groundLayerMask);
+                
+                return hit.collider;
+            }
+
+            // private void OnDrawGizmos()
+            // {
+            //     Debug.DrawRay(transform.position, new Vector2(0, 1.3f));
+            // }
+
+            #endregion
     
         #region Shooting
             void ShootBullet() 
@@ -265,14 +300,39 @@ namespace Angel
         private IEnumerator Dash()
         {
             _canDash = false;
+            _canSlide = false;
             _isDashing = true;
             _velocity.y = 0f;
             _rb.velocity = new Vector2(_velocity.x * stats.dashingPower, _velocity.y);
             _dashingTrailRenderer.emitting = true;
+            
             yield return new WaitForSeconds(stats.dashingTime);
             _dashingTrailRenderer.emitting = false;
             _isDashing = false;
             yield return new WaitForSeconds(stats.dashingCooldown);
+            _canDash = true;
+            _canSlide = true;
+        }
+
+        IEnumerator Slide()
+        {
+            _canSlide = false;
+            _canDash = false;
+            _isSliding = true;
+            _mainCollider.enabled = false;
+            slideCollider.enabled = true;
+            _rb.velocity = new Vector2(Mathf.Sign(_rb.velocity.x) * stats.slidePower, Physics2D.gravity.y);
+            _dashingTrailRenderer.emitting = true;
+            yield return new WaitForSeconds(stats.minSlideTime);
+
+            //after min time passes, check if player is still under an object
+            yield return new WaitWhile(IsUnderObject);
+            _dashingTrailRenderer.emitting = false;
+            _isSliding = false;
+            _mainCollider.enabled = true;
+            slideCollider.enabled = false;
+            yield return new WaitForSeconds(stats.slideCooldown);
+            _canSlide = true;
             _canDash = true;
         }
         

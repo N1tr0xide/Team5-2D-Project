@@ -20,6 +20,9 @@ MonoBehaviour:
   groundDeceleration: 60
   airDeceleration: 30
   groundedDownforce: -1.5
+  slidePower: 10
+  minSlideTime: 0.8
+  slideCooldown: 1
   maxFallSpeed: 40
   jumpPower: 10
   jumpBeingHeldGravityModifier: 3
