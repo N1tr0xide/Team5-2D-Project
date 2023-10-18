@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 public class AudioController : MonoBehaviour
 {
-    [SerializeField]  private AudioAssets audioAssets;
+    public AudioAssets audioAssets;
     [SerializeField] private AudioSource musicPlayer;
     [SerializeField] private AudioSource sfxPlayer;
     
@@ -23,10 +23,10 @@ public class AudioController : MonoBehaviour
         {
             PlayMusic(audioAssets.level1);
         }
-        // else if (currentScene == "Level_2")
-        // {
-        //     PlayMusic(audioAssets.level2);
-        // }
+        else if (currentScene == "Level_2")
+        {
+            PlayMusic(audioAssets.level2);
+        }
         // else if (currentScene == "Credits")
         // {
         //     PlayMusic(audioAssets.beatLevel);
@@ -57,7 +57,6 @@ public class AudioController : MonoBehaviour
     /// <param name="soundToPlay"></param>
     public void PlaySfx(AudioClip soundToPlay)
     {
-        sfxPlayer.clip = soundToPlay;
-        sfxPlayer.Play();
+        sfxPlayer.PlayOneShot(soundToPlay);
     }
 }

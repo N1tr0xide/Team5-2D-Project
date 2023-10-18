@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Angel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -10,6 +11,7 @@ public class DebugController : MonoBehaviour
 {
     private bool _showConsole;
     private bool _showHelp;
+    
     private Vector2 _scroll;
     private readonly int _boxHeight = 40;
     private string _input;
@@ -19,6 +21,7 @@ public class DebugController : MonoBehaviour
     private static DebugCommand _help;
     private static DebugCommand _resetScene;
     private static DebugCommand<string> _loadScene;
+    private static DebugCommand _resetAmmo;
 
     // Start is called before the first frame update
     void Awake()
@@ -32,10 +35,18 @@ public class DebugController : MonoBehaviour
 
         _help = new DebugCommand("help", "show list of commands", "help", () => _showHelp = true);
 
+        _resetAmmo = new DebugCommand("reset_ammo", "reset current ammo to its maximum", "reset_ammo", () =>
+        {
+            PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+            playerController.currentAmmo = playerController.stats.maxAmmo;
+            playerController.OnAmmoUpdateUI();
+        });
+
         _commandList = new List<object>
         {
             _resetScene,
             _loadScene,
+            _resetAmmo,
             _help
         };
     }
@@ -85,6 +96,8 @@ public class DebugController : MonoBehaviour
         }
     }
 
+
+    
     /// <summary>
     /// Draw debug boxes
     /// </summary>
@@ -92,6 +105,8 @@ public class DebugController : MonoBehaviour
     {
         if(!_showConsole) {return;}
         float y = Screen.height -_boxHeight; //put box at bottom
+
+        float width = Screen.width;
 
         GUIStyle style = new GUIStyle
         {
@@ -102,8 +117,8 @@ public class DebugController : MonoBehaviour
         if (_showHelp)
         {
             GUI.Box(new Rect(0, y - 100, Screen.width, 100), "");
-            Rect viewport = new Rect(0, 0, Screen.width - 30, 20 * _commandList.Count);
-            _scroll = GUI.BeginScrollView(new Rect(0, y - 100, Screen.width, 80), _scroll, viewport);
+            Rect viewport = new Rect(0, 0, Screen.width - 30, 25 * _commandList.Count);
+            _scroll = GUI.BeginScrollView(new Rect(0, y - 100, width, 100), _scroll, viewport, false, true);
 
             for (int i = 0; i < _commandList.Count; i++)
             {

@@ -8,7 +8,7 @@ namespace Angel
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private ScriptableStats stats;
+        public ScriptableStats stats;
         private Rigidbody2D _rb;
         private SpriteRenderer _sr;
         private int _fixedFrame;
@@ -48,7 +48,7 @@ namespace Angel
         //Bullets
         private ObjectPooler _bulletPoller;
         [SerializeField] private GameObject bulletPrefab;
-        private int _currentAmmo;
+        [HideInInspector] public int currentAmmo;
         public event Action<int> OnAmmoChanged;
 
         //Enemy Interactions
@@ -59,6 +59,9 @@ namespace Angel
         //Health
         private int _currentHealth;
         public event Action<int> OnHealthChanged;
+        
+        //Audio
+        private AudioController _audio;
 
 
         void Start()
@@ -70,16 +73,16 @@ namespace Angel
             slideCollider.enabled = false;
             _mainCollider.enabled = true;
             _groundLayerMask = LayerMask.GetMask("Ground");
+            _audio = GameObject.FindWithTag("AudioObj").GetComponent<AudioController>();
             
             InitializeBulletPooler();
             _currentHealth = stats.maxHealth;
-            _currentAmmo = stats.maxAmmo;
+            currentAmmo = stats.maxAmmo;
         }
     
         void Update()
         {
             GetInput();
-            //print(_canSlide);
         }
 
         private void FixedUpdate()
@@ -97,7 +100,6 @@ namespace Angel
             }
             
             ApplyMovement();
-            
         } 
         void GetInput()
         {
@@ -107,7 +109,6 @@ namespace Angel
             _shootingInput = Input.GetMouseButtonDown(0);
             _dashingInput = Input.GetKeyDown(KeyCode.LeftShift);
             _slideInput = Input.GetKeyDown(KeyCode.S);
-            
 
             if (stats.snapInput) //Snap horizontal input after reaching threshold
             { 
@@ -241,13 +242,26 @@ namespace Angel
             {
                 GameObject bulletToShoot = _bulletPoller.GetPooledObject();
             
-                if (bulletToShoot != null && _currentAmmo > 0) //if there is an inactive prefab and ammo is higher than 0, shoot bullet
+                if (bulletToShoot != null && currentAmmo > 0) //if there is an inactive prefab and ammo is higher than 0, shoot bullet
                 {
                     bulletToShoot.transform.position = transform.position;
                     bulletToShoot.SetActive(true);
-                    _currentAmmo--;
-                    OnAmmoChanged?.Invoke(_currentAmmo); // call subscriber to update Ui
+                    _audio.PlaySfx(_audio.audioAssets.gun);
+                    currentAmmo--;
+                    OnAmmoUpdateUI();
                 }
+                else
+                {
+                    _audio.PlaySfx(_audio.audioAssets.gunEmpty);
+                }
+            }
+
+            /// <summary>
+            ///  // call subscriber to update ammo Ui
+            /// </summary>
+            public void OnAmmoUpdateUI()
+            {
+                OnAmmoChanged?.Invoke(currentAmmo);
             }
             
             void InitializeBulletPooler() 

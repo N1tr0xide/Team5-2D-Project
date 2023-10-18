@@ -12,8 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233d7425f3bc21f488fea29c36a0762d, type: 3}
   m_Name: Audio_Assets
   m_EditorClassIdentifier: 
-  mainMenu: {fileID: 8300000, guid: 11b78fde98477124fb806fb8c51e22d2, type: 3}
-  level1: {fileID: 8300000, guid: 36f00770132a1b3469834d8043e9f3fb, type: 3}
-  level2: {fileID: 8300000, guid: 3db85403c0d6639408dbef882d6b33da, type: 3}
-  beatLevel: {fileID: 8300000, guid: 851bb6a4d1f7e074ab5435073471d29f, type: 3}
-  beatBoss: {fileID: 8300000, guid: c96ed843ab1c1034ab3cffaed6917f0d, type: 3}
+  mainMenu: {fileID: 8300000, guid: 94b8add4fab5c524f86b6f538c242b55, type: 3}
+  level1: {fileID: 8300000, guid: 32ec0e6c379d6ae46828e3890682f555, type: 3}
+  level2: {fileID: 8300000, guid: 17d0d1b24a8a4f249ad40e2c2aff6ff9, type: 3}
+  beatLevel: {fileID: 8300000, guid: ff86e17739182e549a9f6035e54c0ffd, type: 3}
+  beatBoss: {fileID: 8300000, guid: e97361555cf2a8446be7bcc098eabe9e, type: 3}
+  gun: {fileID: 8300000, guid: a66221bfa5bc29e49b7b3b0cb86013f4, type: 3}
+  gunEmpty: {fileID: 8300000, guid: 630b8705e6776744b86a11ff8d921b9c, type: 3}
+  reload1: {fileID: 8300000, guid: 41fed36b127d5124ea054044e3d27bd9, type: 3}
+  reload2: {fileID: 8300000, guid: 4284bd7eef6a00a45925896c602f3581, type: 3}
+  reload3: {fileID: 8300000, guid: ddebf8b70ca2bc44e875c3bf446b8f84, type: 3}
+  whip: {fileID: 8300000, guid: 858f7852d7f14554b8d114153d245952, type: 3}

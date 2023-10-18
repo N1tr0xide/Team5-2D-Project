@@ -13,5 +13,12 @@ public class AudioAssets : ScriptableObject
     public AudioClip beatLevel;
     public AudioClip beatBoss;
     
-    // [Header("Sound Effects")]
+    [Header("Sound Effects")]
+    public AudioClip gun;
+    public AudioClip gunEmpty;
+    public AudioClip reload1;
+    public AudioClip reload2;
+    public AudioClip reload3;
+    public AudioClip whip;
+
 }
