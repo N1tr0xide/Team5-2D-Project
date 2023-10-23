@@ -51,12 +51,15 @@ namespace Angel
         [SerializeField] private GameObject bulletPrefab;
         [HideInInspector] public int currentAmmo;
         public event Action<int> OnAmmoChanged;
-        public bulletPowerupMode currentBulletPowerup;
+        public BulletPowerUpMode currentBulletPowerUp;
 
-        public enum bulletPowerupMode
+        public enum BulletPowerUpMode
         {
-            normal,
-            powerup
+            Normal,
+            Fire,
+            Electric,
+            Wind,
+            Ice
         }
 
         //Enemy Interactions
@@ -86,7 +89,7 @@ namespace Angel
             InitializeBulletPooler();
             _currentHealth = stats.maxHealth;
             currentAmmo = stats.maxAmmo;
-            currentBulletPowerup = bulletPowerupMode.normal;
+            //currentBulletPowerUp = BulletPowerUpMode.Normal;
         }
     
         void Update()
@@ -228,7 +231,7 @@ namespace Angel
                 if (collision.gameObject.CompareTag("DeathZone"))
                 {
                     gameObject.SetActive(false);
-                    Invoke("RestartLevel", 3);
+                    Invoke(nameof(RestartLevel), 3);
                 }
             }
 
@@ -237,11 +240,10 @@ namespace Angel
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
 
-        bool IsGrounded() //Check if player is touching the Ground LayerMask
+            bool IsGrounded() //Check if player is touching the Ground LayerMask
             {
                 float distance = 1.1f;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, distance, _groundLayerMask);
-
                 return hit.collider;
             }
 
@@ -249,16 +251,10 @@ namespace Angel
             {
                 float distance = 1.3f;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, distance, _groundLayerMask);
-                
                 return hit.collider;
             }
 
-            // private void OnDrawGizmos()
-            // {
-            //     Debug.DrawRay(transform.position, new Vector2(0, 1.3f));
-            // }
-
-            #endregion
+        #endregion
     
         #region Shooting
             void ShootBullet() 
@@ -304,7 +300,7 @@ namespace Angel
                 _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, stats.maxHealth);
                 OnHealthChanged?.Invoke(_currentHealth); //calls subscriber to update UI
 
-                if (_currentHealth == 0)
+                if (_currentHealth <= 0)
                 {
                     //ded
                 }
