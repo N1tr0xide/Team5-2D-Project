@@ -222,7 +222,7 @@ namespace Angel
             {
                 if (other.gameObject.CompareTag("Enemy") && _canBeDamaged)
                 {
-                    StartCoroutine(HandleDamageReceived(other));
+                    StartCoroutine(HandleDamageReceived(other.transform));
                 }
             }
 
@@ -232,6 +232,10 @@ namespace Angel
                 {
                     gameObject.SetActive(false);
                     Invoke(nameof(RestartLevel), 3);
+                }
+                else if (collision.gameObject.CompareTag("Enemy") && _canBeDamaged)
+                {
+                    StartCoroutine(HandleDamageReceived(collision.transform));
                 }
             }
 
@@ -294,19 +298,7 @@ namespace Angel
         #endregion
 
         #region Player Health
-        
-            void TakeDamage(int amount)
-            {
-                _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, stats.maxHealth);
-                OnHealthChanged?.Invoke(_currentHealth); //calls subscriber to update UI
-
-                if (_currentHealth <= 0)
-                {
-                    //ded
-                }
-            }
-        
-            private IEnumerator HandleDamageReceived(Collision2D other)
+            private IEnumerator HandleDamageReceived(Transform other)
             {
                 _canBeDamaged = false;
                 _isBeingDamaged = true;
@@ -314,7 +306,7 @@ namespace Angel
                 TakeDamage(1);
                     
                 Physics2D.IgnoreLayerCollision(6,7,true);
-                Vector2 knockBackDir = (transform.position - other.transform.position).normalized;
+                Vector2 knockBackDir = (transform.position - other.position).normalized;
                 _rb.velocity = new Vector2(knockBackDir.x * stats.knockBackForceHorizontal, knockBackDir.y * stats.knockBackForceVertical);
                 _sr.color = new Color(1,0,0,.5f);
                     
@@ -327,7 +319,18 @@ namespace Angel
                 _sr.color = Color.white;
                 _canBeDamaged = true;
             }
+            
+            void TakeDamage(int amount)
+            {
+                _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, stats.maxHealth);
+                OnHealthChanged?.Invoke(_currentHealth); //calls subscriber to update UI
 
+                if (_currentHealth <= 0)
+                {
+                    //ded
+                }
+            }
+            
         #endregion
 
         private IEnumerator Dash()

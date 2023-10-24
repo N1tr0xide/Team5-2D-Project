@@ -262,6 +262,8 @@ MonoBehaviour:
   stats: {fileID: 11400000, guid: e3309dbcfd713124da3b3a890970c3d7, type: 2}
   slideCollider: {fileID: 8752843478468914429}
   bulletPrefab: {fileID: 2826974975018029238, guid: d4bae036cf4832c4696c2fa001f63633, type: 3}
+  currentAmmo: 0
+  currentBulletPowerUp: 0
 --- !u!1 &6843155564625101950
 GameObject:
   m_ObjectHideFlags: 0
