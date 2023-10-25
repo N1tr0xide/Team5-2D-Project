@@ -23673,6 +23673,8 @@ MonoBehaviour:
   level2_MinHeight: 0
   level1_minXpos: 0
   level2_minXpos: 0
+  level1MiniBossPos: {x: 0, y: 0, z: 0}
+  level2MiniBossPos: {x: 0, y: 0, z: 0}
 --- !u!1001 &1723303286
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24617,11 +24619,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.8
+      value: 733.2
       objectReference: {fileID: 0}
     - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.8
+      value: -47
       objectReference: {fileID: 0}
     - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
       propertyPath: m_LocalPosition.z
