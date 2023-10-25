@@ -97,11 +97,6 @@ public class EnemyController : MonoBehaviour
                     Instantiate(powerUpPrefab, transform.position, quaternion.identity);
                 }
 
-                if (SceneManager.GetActiveScene().name == "Level_2")
-                {
-                    SceneManager.LoadScene("Credit");
-                }
-                
                 Destroy(gameObject);
             }
         }

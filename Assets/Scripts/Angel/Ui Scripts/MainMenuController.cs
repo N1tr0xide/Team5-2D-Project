@@ -17,7 +17,8 @@ public class MainMenuController : MonoBehaviour
 
     public void OnClickPLay()
     {
-        StartCoroutine(_screenTransition.LoadSceneCrossFade(3, "Level_1"));
+        //StartCoroutine(_screenTransition.LoadSceneCrossFade(3, "Level_1"));
+        SceneManager.LoadScene("Level_1");
     }
 
     public void OnClickHelp()
