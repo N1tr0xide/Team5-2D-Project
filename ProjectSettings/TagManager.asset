@@ -8,8 +8,7 @@ TagManager:
   - Enemy
   - AudioObj
   - DeathZone
-  - Confiner
-  - Ammo
+  - PowerUp
   layers:
   - Default
   - TransparentFX

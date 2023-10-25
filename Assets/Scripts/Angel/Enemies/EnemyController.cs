@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour
 {
@@ -11,6 +14,7 @@ public class EnemyController : MonoBehaviour
     private int _burnCounter = 0;
     
     [SerializeField] private GameObject damagePopupPrefab;
+    [SerializeField] private GameObject powerUpPrefab;
     
     //Health
     [SerializeField] private int maxHealth;
@@ -87,6 +91,11 @@ public class EnemyController : MonoBehaviour
 
             if (_currentHealth <= 0)
             {
+                if (Random.Range(0, 100) > 30) //Change of 30% for new powerUp
+                {
+                    Instantiate(powerUpPrefab, transform.position, quaternion.identity);
+                }
+                
                 Destroy(gameObject);
             }
         }
