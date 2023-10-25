@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace Angel
@@ -50,6 +51,16 @@ namespace Angel
         [SerializeField] private GameObject bulletPrefab;
         [HideInInspector] public int currentAmmo;
         public event Action<int> OnAmmoChanged;
+        public BulletPowerUpMode currentBulletPowerUp;
+
+        public enum BulletPowerUpMode
+        {
+            Normal,
+            Fire, //index: 0
+            Electric, //index: 1
+            Wind, //index: 2
+            Ice //index: 3
+        }
 
         //Enemy Interactions
         private bool _canBeDamaged = true;
@@ -78,6 +89,7 @@ namespace Angel
             InitializeBulletPooler();
             _currentHealth = stats.maxHealth;
             currentAmmo = stats.maxAmmo;
+            currentBulletPowerUp = BulletPowerUpMode.Normal;
         }
     
         void Update()
@@ -210,15 +222,36 @@ namespace Angel
             {
                 if (other.gameObject.CompareTag("Enemy") && _canBeDamaged)
                 {
-                    StartCoroutine(HandleDamageReceived(other));
+                    StartCoroutine(HandleDamageReceived(other.transform));
                 }
             }
-            
+
+            private void OnTriggerEnter2D(Collider2D collision)
+            {
+                if (collision.gameObject.CompareTag("DeathZone"))
+                {
+                    gameObject.SetActive(false);
+                    Invoke(nameof(RestartLevel), 3);
+                }
+                else if (collision.gameObject.CompareTag("Enemy") && _canBeDamaged)
+                {
+                    StartCoroutine(HandleDamageReceived(collision.transform));
+                }
+                else if(collision.gameObject.CompareTag("PowerUp"))
+                {
+                    SetUpPowerUp(collision.GetComponent<powerUpController>().PowerUpIndex);
+                }
+            }
+
+            void RestartLevel()
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+
             bool IsGrounded() //Check if player is touching the Ground LayerMask
             {
                 float distance = 1.1f;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, distance, _groundLayerMask);
-
                 return hit.collider;
             }
 
@@ -226,16 +259,10 @@ namespace Angel
             {
                 float distance = 1.3f;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, distance, _groundLayerMask);
-                
                 return hit.collider;
             }
 
-            // private void OnDrawGizmos()
-            // {
-            //     Debug.DrawRay(transform.position, new Vector2(0, 1.3f));
-            // }
-
-            #endregion
+        #endregion
     
         #region Shooting
             void ShootBullet() 
@@ -246,9 +273,11 @@ namespace Angel
                 {
                     bulletToShoot.transform.position = transform.position;
                     bulletToShoot.SetActive(true);
+                    
                     _audio.PlaySfx(_audio.audioAssets.gun);
                     currentAmmo--;
-                    OnAmmoUpdateUI();
+                    currentBulletPowerUp = BulletPowerUpMode.Normal;
+                    OnAmmoUpdate();
                 }
                 else
                 {
@@ -259,7 +288,7 @@ namespace Angel
             /// <summary>
             ///  // call subscriber to update ammo Ui
             /// </summary>
-            public void OnAmmoUpdateUI()
+            public void OnAmmoUpdate()
             {
                 OnAmmoChanged?.Invoke(currentAmmo);
             }
@@ -275,19 +304,7 @@ namespace Angel
         #endregion
 
         #region Player Health
-        
-            void TakeDamage(int amount)
-            {
-                _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, stats.maxHealth);
-                OnHealthChanged?.Invoke(_currentHealth); //calls subscriber to update UI
-
-                if (_currentHealth == 0)
-                {
-                    //ded
-                }
-            }
-        
-            private IEnumerator HandleDamageReceived(Collision2D other)
+            private IEnumerator HandleDamageReceived(Transform other)
             {
                 _canBeDamaged = false;
                 _isBeingDamaged = true;
@@ -295,7 +312,7 @@ namespace Angel
                 TakeDamage(1);
                     
                 Physics2D.IgnoreLayerCollision(6,7,true);
-                Vector2 knockBackDir = (transform.position - other.transform.position).normalized;
+                Vector2 knockBackDir = (transform.position - other.position).normalized;
                 _rb.velocity = new Vector2(knockBackDir.x * stats.knockBackForceHorizontal, knockBackDir.y * stats.knockBackForceVertical);
                 _sr.color = new Color(1,0,0,.5f);
                     
@@ -308,7 +325,18 @@ namespace Angel
                 _sr.color = Color.white;
                 _canBeDamaged = true;
             }
+            
+            void TakeDamage(int amount)
+            {
+                _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, stats.maxHealth);
+                OnHealthChanged?.Invoke(_currentHealth); //calls subscriber to update UI
 
+                if (_currentHealth <= 0)
+                {
+                    //ded
+                }
+            }
+            
         #endregion
 
         private IEnumerator Dash()
@@ -348,6 +376,28 @@ namespace Angel
             yield return new WaitForSeconds(stats.slideCooldown);
             _canSlide = true;
             _canDash = true;
+        }
+
+        void SetUpPowerUp(int index)
+        {
+            switch (index)
+            {
+                case 0:  //Fire PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Fire;
+                    break;
+                case 1:  //Electric PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Electric;
+                    break;
+                case 2:  //Wind PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Wind;
+                    break;
+                case 3:  //Ice PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Ice;
+                    break;
+                default:
+                    currentBulletPowerUp = BulletPowerUpMode.Normal;
+                    break;
+            }
         }
         
 #if UNITY_EDITOR

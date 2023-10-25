@@ -6,8 +6,12 @@ TagManager:
   tags:
   - Cursor
   - Enemy
-  - Confiner
   - AudioObj
+  - DeathZone
+  - PowerUp
+  - Confiner
+  - AmmoPickup
+  - Ammo
   layers:
   - Default
   - TransparentFX
@@ -17,7 +21,7 @@ TagManager:
   - UI
   - Player
   - Enemy
-  - DeathZone
+  - CameraTrigger
   - 
   - 
   - 
