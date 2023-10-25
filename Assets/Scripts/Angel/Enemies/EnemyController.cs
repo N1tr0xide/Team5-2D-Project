@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -18,8 +19,8 @@ public class EnemyController : MonoBehaviour
     
     //Health
     [SerializeField] private int maxHealth;
-    private int _currentHealth;
-    
+    public int _currentHealth { get; private set; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -94,6 +95,11 @@ public class EnemyController : MonoBehaviour
                 if (Random.Range(0, 100) > 30) //Change of 30% for new powerUp
                 {
                     Instantiate(powerUpPrefab, transform.position, quaternion.identity);
+                }
+
+                if (SceneManager.GetActiveScene().name == "Level_2")
+                {
+                    SceneManager.LoadScene("Credit");
                 }
                 
                 Destroy(gameObject);
