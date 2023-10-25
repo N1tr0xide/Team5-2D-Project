@@ -8,11 +8,16 @@ using UnityEngine.Serialization;
 
 public class MainMenuController : MonoBehaviour
 {
+    private ScreenTransition _screenTransition;
+
+    private void Start()
+    {
+        _screenTransition = GameObject.Find("LoadingScreen").GetComponent<ScreenTransition>();
+    }
+
     public void OnClickPLay()
     {
-        //play transition
-        SceneManager.LoadScene("Level_1");
-
+        StartCoroutine(_screenTransition.LoadSceneCrossFade(3, "Level_1"));
     }
 
     public void OnClickHelp()
