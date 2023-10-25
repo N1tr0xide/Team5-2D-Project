@@ -9,6 +9,9 @@ TagManager:
   - AudioObj
   - DeathZone
   - PowerUp
+  - Confiner
+  - AmmoPickup
+  - Ammo
   layers:
   - Default
   - TransparentFX
