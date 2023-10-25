@@ -19146,6 +19146,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offsetX: 5
   speed: 2
+  level1_MinHeight: 0
+  level2_MinHeight: 0
+  level1_minXpos: 0
+  level2_minXpos: 0
+  level1MiniBossPos: {x: 0, y: 0, z: 0}
+  level2MiniBossPos: {x: 0, y: 0, z: 0}
 --- !u!1001 &1723303286
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21450,95 +21456,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7420103297528366106, guid: 90e24810245c47e448492499de68f7da, type: 3}
   m_PrefabInstance: {fileID: 1267560926238834803}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1718463456519227630
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: stopAction
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: NoiseModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: ShapeModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: LightsModule.enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: TriggerModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: EmissionModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: RotationModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 228199561476431671, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: SizeBySpeedModule.enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 5.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 6.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 101.56571
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2311536922530946923, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310164122777677419, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
-      propertyPath: m_Name
-      value: Boss Defeated VFX
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 3a9c873b56e43c14f9e2760745bbf2dd, type: 3}
 --- !u!1001 &2212216210273159188
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22029,7 +21946,6 @@ SceneRoots:
   - {fileID: 4587947206809239647}
   - {fileID: 8359759229076740621}
   - {fileID: 2838025529533089191}
-  - {fileID: 1718463456519227630}
   - {fileID: 2054026694}
   - {fileID: 746317538}
   - {fileID: 336273216}
