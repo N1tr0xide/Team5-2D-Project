@@ -56,10 +56,10 @@ namespace Angel
         public enum BulletPowerUpMode
         {
             Normal,
-            Fire,
-            Electric,
-            Wind,
-            Ice
+            Fire, //index: 0
+            Electric, //index: 1
+            Wind, //index: 2
+            Ice //index: 3
         }
 
         //Enemy Interactions
@@ -89,7 +89,7 @@ namespace Angel
             InitializeBulletPooler();
             _currentHealth = stats.maxHealth;
             currentAmmo = stats.maxAmmo;
-            //currentBulletPowerUp = BulletPowerUpMode.Normal;
+            currentBulletPowerUp = BulletPowerUpMode.Normal;
         }
     
         void Update()
@@ -237,6 +237,10 @@ namespace Angel
                 {
                     StartCoroutine(HandleDamageReceived(collision.transform));
                 }
+                else if(collision.gameObject.CompareTag("PowerUp"))
+                {
+                    SetUpPowerUp(collision.GetComponent<powerUpController>().PowerUpIndex);
+                }
             }
 
             void RestartLevel()
@@ -269,8 +273,10 @@ namespace Angel
                 {
                     bulletToShoot.transform.position = transform.position;
                     bulletToShoot.SetActive(true);
+                    
                     _audio.PlaySfx(_audio.audioAssets.gun);
                     currentAmmo--;
+                    currentBulletPowerUp = BulletPowerUpMode.Normal;
                     OnAmmoUpdate();
                 }
                 else
@@ -370,6 +376,28 @@ namespace Angel
             yield return new WaitForSeconds(stats.slideCooldown);
             _canSlide = true;
             _canDash = true;
+        }
+
+        void SetUpPowerUp(int index)
+        {
+            switch (index)
+            {
+                case 0:  //Fire PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Fire;
+                    break;
+                case 1:  //Electric PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Electric;
+                    break;
+                case 2:  //Wind PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Wind;
+                    break;
+                case 3:  //Ice PowerUp
+                    currentBulletPowerUp = BulletPowerUpMode.Ice;
+                    break;
+                default:
+                    currentBulletPowerUp = BulletPowerUpMode.Normal;
+                    break;
+            }
         }
         
 #if UNITY_EDITOR

@@ -163,7 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damagePopupPrefab: {fileID: 2088887811509963319, guid: 91547cfa780633249b36fcb9fc5a6d6a, type: 3}
-  maxHealth: 10
+  powerUpPrefab: {fileID: 6090972654010464366, guid: 7a6cc3db1d080bc49909e6c011fc4f6e, type: 3}
+  maxHealth: 3
 --- !u!114 &6896536587195765481
 MonoBehaviour:
   m_ObjectHideFlags: 0
